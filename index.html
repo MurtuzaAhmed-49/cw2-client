@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CW1 - Coursework One</title>
+  <!-- CSS only -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+</head>
+
+<body>
+  <div class='container' style="text-align: center;">
+    <h3>After School Club - Learning Spaces</h3>
+  </div>
+
+  <div id="app">
+    <div v-if='cart.length > 0'>
+      <button v-on:click="toggleShowProduct">
+        {{ cart.length }}
+        <span></span> Checkout
+      </button>
+    </div>
+    <div v-else>
+      <button v-on:click="toggleShowProduct">
+        {{ cart.length }}
+        <span></span> Checkout
+    </div>
+    <div class="class_windows" v-if="showProducts">
+      <div class="container">
+        <div class='row'>
+
+          <!-- Sorting Options -->
+          <main>
+            <!-- sorting section-->
+            <div id="sorting">
+              <h3>Sort by:</h3>
+              <select v-model="attribute">
+                <option value="name" >Subject</option>
+                <option value="location">location</option>
+                <option value="price">price</option>
+                <option value="seats">availability</option>
+              </select>
+      
+              <div class="mini-cont">
+                <label for="asc">Ascending</label>
+                <input name='sortRadiobtn'  type="radio" id="asc" value="1" v-model="sortingOrder" />
+              
+                <label for="dsc">Descending</label>
+                <input  name='sortRadiobtn' type="radio" id="dsc" value="-1" v-model="sortingOrder" />
+              </div>
+            </div>
+          </main>
+
+
+          <div id='card' class='col-lg-8 col-sm-6' v-for="(lesson, index) in sortedArray">
+            <img id="img" class='product-image' v-bind:src='lesson.imgSrc' alt='lesson.imgSrc'>
+            <div>Subject: <b>{{ lesson.name }}</b></div>
+            <div>Location: <b>{{ lesson.name }}</b></div>
+            <div>Spaces:
+              <b v-if='lesson.spaces > 0'>{{ lesson.price }}</b>
+              <b v-else-if='lesson.spaces <= 0' style="background-color: red;color:white">No Space</b>
+            </div>
+            <div>Price: <b>£{{ lesson.price }}.00</b></div>
+            <div class="right">
+              <span v-if='lesson.spaces > 0'>
+                <input class="basketbt" type="button" id="addToBasket" value="Add to Basket"
+                  v-on:click="toBasket(index)" />
+              </span>
+              <span v-else-if='lesson.spaces <= 0'>
+                <input class="basketbt" type="button" id="addBasket" value="Add to Basket" v-on:click="toBasket(lesson.id)"
+                  style='color:gray' disabled />
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div v-else>
+      <div class='container'>
+        <div class='row'>
+          <h2>Shopping Cart</h2>
+          <h3>Total Quantity: {{ cartQty }}</h3>
+          <h3>Total Price: £{{ cartTotal }}.00</h3>
+          <div id='card' class='col-lg-8 col-sm-6' v-for='c in cart'>
+            <img class='product-image' v-bind:src="lessons[c.id].imgSrc" alt="lessons[c.id].imgSrc">
+            <div>Subject: <b>{{ lessons[c.id].subject }}</b></div>
+            <div>Location: <b>{{ lessons[c.id].location }}</b></div>
+            <div>Price: <b>£{{ lessons[c.id].price }}.00</b></div>
+            <input class="basketbt" type="button" id="remToBasket" value="Remove" v-on:click="removeBasket(c.id)" />
+          </div>
+          <strong>Name: </strong><input v-model='orders.name' />
+          <strong>Phone: </strong><input v-model='orders.phone' />
+          <input class="basketbt" type="button" id="proceedBuy" value="Confirm Order" v-on:click="confirmOrder()" />
+          <h2>Total Quantity: {{ cartQty }}</h2>
+          <h2>Total Price: £{{ cartTotal }}.00</h2>
+        </div>
+      </div>
+    </div>
+    <!-- Checkout istart here -->
+  </div>
+
+  <script src="lesson.js"></script>
+  <script src="application.js"></script>
+  <script>
+
+  </script>
+</body>
+</html>
