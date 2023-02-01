@@ -2,112 +2,188 @@
 <html lang="en">
 
 <head>
-  <meta charset="UTF-8" />
-  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>CW1 - Coursework One</title>
-  <!-- CSS only -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet"
-    integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
-  <link rel="stylesheet" href="style.css" />
-  <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CW2 - Coursework Two</title>
+    <!-- CSS only -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
+    <link rel="stylesheet" href="style.css" />
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
 </head>
 
 <body>
-  <div class='container' style="text-align: center;">
-    <h3>After School Club - Learning Spaces</h3>
-  </div>
-
-  <div id="app">
-    <div v-if='cart.length > 0'>
-      <button v-on:click="toggleShowProduct">
-        {{ cart.length }}
-        <span></span> Checkout
-      </button>
-    </div>
-    <div v-else>
-      <button v-on:click="toggleShowProduct">
-        {{ cart.length }}
-        <span></span> Checkout
-    </div>
-    <div class="class_windows" v-if="showProducts">
-      <div class="container">
-        <div class='row'>
-
-          <!-- Sorting Options -->
-          <main>
-            <!-- sorting section-->
-            <div id="sorting">
-              <h3>Sort by:</h3>
-              <select v-model="attribute">
-                <option value="name" >Subject</option>
-                <option value="location">location</option>
-                <option value="price">price</option>
-                <option value="seats">availability</option>
-              </select>
-      
-              <div class="mini-cont">
-                <label for="asc">Ascending</label>
-                <input name='sortRadiobtn'  type="radio" id="asc" value="1" v-model="sortingOrder" />
-              
-                <label for="dsc">Descending</label>
-                <input  name='sortRadiobtn' type="radio" id="dsc" value="-1" v-model="sortingOrder" />
-              </div>
-            </div>
-          </main>
-
-
-          <div id='card' class='col-lg-8 col-sm-6' v-for="(lesson, index) in sortedArray">
-            <img id="img" class='product-image' v-bind:src='lesson.imgSrc' alt='lesson.imgSrc'>
-            <div>Subject: <b>{{ lesson.name }}</b></div>
-            <div>Location: <b>{{ lesson.name }}</b></div>
-            <div>Spaces:
-              <b v-if='lesson.spaces > 0'>{{ lesson.price }}</b>
-              <b v-else-if='lesson.spaces <= 0' style="background-color: red;color:white">No Space</b>
-            </div>
-            <div>Price: <b>£{{ lesson.price }}.00</b></div>
-            <div class="right">
-              <span v-if='lesson.spaces > 0'>
-                <input class="basketbt" type="button" id="addToBasket" value="Add to Basket"
-                  v-on:click="toBasket(index)" />
-              </span>
-              <span v-else-if='lesson.spaces <= 0'>
-                <input class="basketbt" type="button" id="addBasket" value="Add to Basket" v-on:click="toBasket(lesson.id)"
-                  style='color:gray' disabled />
-              </span>
-            </div>
-          </div>
+    <div id="app">
+        <div class='container' style="text-align: center;">
+            <h3 class="display-2">Learning Spaces in United Kingdom</h3>
         </div>
-      </div>
-    </div>
-    <div v-else>
-      <div class='container'>
-        <div class='row'>
-          <h2>Shopping Cart</h2>
-          <h3>Total Quantity: {{ cartQty }}</h3>
-          <h3>Total Price: £{{ cartTotal }}.00</h3>
-          <div id='card' class='col-lg-8 col-sm-6' v-for='c in cart'>
-            <img class='product-image' v-bind:src="lessons[c.id].imgSrc" alt="lessons[c.id].imgSrc">
-            <div>Subject: <b>{{ lessons[c.id].subject }}</b></div>
-            <div>Location: <b>{{ lessons[c.id].location }}</b></div>
-            <div>Price: <b>£{{ lessons[c.id].price }}.00</b></div>
-            <input class="basketbt" type="button" id="remToBasket" value="Remove" v-on:click="removeBasket(c.id)" />
-          </div>
-          <strong>Name: </strong><input v-model='orders.name' />
-          <strong>Phone: </strong><input v-model='orders.phone' />
-          <input class="basketbt" type="button" id="proceedBuy" value="Confirm Order" v-on:click="confirmOrder()" />
-          <h2>Total Quantity: {{ cartQty }}</h2>
-          <h2>Total Price: £{{ cartTotal }}.00</h2>
+
+        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+            <div class="container">
+                <a class="navbar-brand" href="#" v-on:click="pagesView(0)">Learning Spaces</a>
+                <button v-on:click="pagesView(0)" class="navbar-toggler" type="button" data-toggle="collapse"
+                    data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false"
+                    aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav">
+                        <li class="nav-item active">
+                            <a class="nav-link" href="#" v-on:click="pagesView(0)">Home</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#" v-on:click="pagesView(2)">Lesson</a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="navbar-collapse collapse">
+                    <ul class="navbar-nav ml-auto">
+                        <li class="nav-item">
+                            <div v-if='cart.length > 0'>
+                                <button class="btn" v-on:click="pagesView(1)">Cart {{ cart.length }}</a>
+                            </div>
+                            <div v-else>
+                                <button class="btn" v-on:click="pagesView(1)">Cart {{ cart.length }}</a>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+
+        <div v-if="showProducts == 0">
+            <div class="container">
+                <div class='row'>
+
+                    <div class="d-flex" style="margin-top: 6px;">
+                        <h3 class="display-6">Search:</h3>
+                        <input type="text" class="form-control" placeholder="Search">
+                    </div>
+
+                    <main>
+                        <div id="sorting" class="form-group">
+                            <p class="text-muted" style="margin: 0px;">Sort by:</p>
+                            <select @change="onChange($event)">
+                                <option value="name">Name</option>
+                                <option value="location">Location</option>
+                                <option value="price">Price</option>
+                                <option value="places">Places</option>
+                            </select>
+
+                            <div class="form-check ">
+                                <input class="form-check-input" name='sortRadiobtn' type="radio" id="asc" value="asc"
+                                    v-on:click="sortings('asc') " checked />
+                                <label class="form-check-label" for="asc"> Ascending</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" name='sortRadiobtn' type="radio" id="desc" value="desc"
+                                    v-on:click="sortings('desc')" />
+                                <label class="form-check-label" for="desc"> Descending</label>
+                            </div>
+
+                        </div>
+                    </main>
+
+                    <div class="container card border border-light p-3">
+                        <div class="row">
+
+                            <div class="col-lg-3 col-sm-6" v-for="(lesson, index) in sortedArray()">
+
+                                <div id='card'>
+                                    <div class="text-muted">Subject: </div>
+                                    <h4 class="">{{ lesson.name }}</h4>
+                                    <img id="img" class='product-image' v-bind:src='lesson.image' alt='lesson.image'>
+                                    <div class="text-muted">Location:</div>
+                                    <div class="">{{ lesson.location }}</div>
+
+                                    <div class="text-muted">places:</div>
+                                    <div v-if='lesson.places > 0'>{{ lesson.places }}</div>
+                                    <div v-else-if='lesson.places <= 0' style="background-color: red;color:white">No
+                                        Space
+                                    </div>
+
+                                    <div class="text-muted">Price: </div>£{{ lesson.price }}</b>
+                                    <div class="right">
+                                        <span v-if='lesson.places > 0'>
+                                            <input class="basketbt btn btn-success" type="button" id="addToBasket"
+                                                value="Add to Basket" v-on:click="toBasket(lesson.id)" />
+                                        </span>
+                                        <span v-else-if='lesson.places <= 0'>
+                                            <input class="basketbt btn btn-success" type="button" id="addBasket"
+                                                value="Add to Basket" v-on:click="toBasket(lesson.id)"
+                                                style='color:gray' disabled />
+                                        </span>
+                                    </div>
+                                </div>
+
+                            </div>
+
+                        </div>
+                    </div>
+
+                </div>
+            </div>
         </div>
-      </div>
+
+        <div v-else-if="showProducts == 1">
+            <div class="container card border border-light p-3">
+                <div class="row">
+
+                    <h3 class="display-6">Shopping Cart:</h3>
+
+                    <div class="col-lg-3 col-sm-6" v-for='a in cart'>
+                        <div id='card'>
+                            <img class='product-image' v-bind:src="a.id.image" alt="a.id.image">
+                            <div>Subject: {{ a.id.name }}</b></div>
+                            <div>Location: {{ a.id.location }}</b></div>
+                            <div>Price: £{{ a.id.price }}</b></div>
+                            <input class="basketbt" type="button" id="remToBasket" value="Remove"
+                                v-on:click="removeBasket(a.id.id)" />
+                        </div>
+                    </div>
+                    <strong>Name: </strong><input v-model='orders.name' />
+                    <strong>Phone: </strong><input v-model='orders.phone' />
+                    <input class="basketbt" type="button" id="proceedBuy" value="Confirm Order"
+                        v-on:click="confirmOrder()" />
+                    <h2>Total Quantity: {{ cartQty }}</h2>
+                    <h2>Total Price: £{{ cartTotal }}</h2>
+                </div>
+            </div>
+        </div>
+        <div v-else>
+            <div class="container card border border-light p-3">
+                <div class="row">
+                    <h3 class="display-6">List of all Lessons</h3>
+                    <div class="col-lg-3 col-sm-6" v-for="(lesson, index) in sortedArray()">
+
+                        <div id='card'>
+                            <div class="text-muted">Subject:</div>
+                            <h4 class="">{{ lesson.name }}</h4>
+                            <img id="img" class='product-image' v-bind:src='lesson.image' alt='lesson.image'>
+                            <div class="text-muted">Location:</div>
+                            <div class="">{{ lesson.location }}</div>
+
+                            <div class="text-muted">places:</div>
+                            <div v-if='lesson.places > 0'>{{ lesson.places }}</div>
+                            <div v-else-if='lesson.places <= 0' style="background-color: red;color:white">No
+                                Space</div>
+
+                            <div class="text-muted">Price: </div>£{{ lesson.price }}</b>
+                        </div>
+
+                    </div>
+                    <p>for booking kindly go to home page</p>
+                </div>
+            </div>
+        </div>
+        <!-- Checkout istart here -->
     </div>
-    <!-- Checkout istart here -->
-  </div>
 
-  <script src="lesson.js"></script>
-  <script src="application.js"></script>
-  <script>
+    </div>
+    <script src="application.js"></script>
 
-  </script>
+
 </body>
+
 </html>

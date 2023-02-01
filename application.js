@@ -4,54 +4,67 @@ const app = Vue.createApp({
         return {
             cart: [],
             sortedPrice: true,
-            showProducts: true,
-            lessons: "http://127.0.0.1:3000/lessons/",
-            attribute: 'name',
-            sortingOrder: 1,
-            // Orders will be save on this object //
+            showProducts: 0,
+            sortingOrder: "asc",
+            sortBy: "name",
+            lessons: "http://cw2fetchserver-env-1.eba-ncygsx5p.us-east-1.elasticbeanstalk.com/lessons/",
             orders:
             {
                 name: '',
                 phone: '',
                 slots: [],
             },
-            lessonsData: []
+            lessonsData: [],
+            cartData: []
         }
     },
     methods: {
-        created() {
-            this.loadLessons();
+        onChange(event) {
+            this.sortBy = event.target.value
+            this.lessons = "http://cw2fetchserver-env-1.eba-ncygsx5p.us-east-1.elasticbeanstalk.com/lessons/" + this.sortingOrder + "/" + event.target.value;
+
         },
-        async loadLessons() {
-            const response = await fetch(this.lessons);
+        created() {
+            this.loadLessons(this.lessons);
+        },
+        async loadLessons(ind) {
+            const response = await fetch(ind);
             const data = await response.json();
-            console.log(response);
             this.lessonsData = data;
         },
-        toBasket(index) {
-            console.log(index);
-            this.lessons[index].spaces--;
+        sortings: function (ind) {
+            console.log(ind);
+            this.sortingOrder = ind;
+        },
+        pagesView: function (ind) {
+            this.showProducts = ind;
+        },
+        async toBasket(index) {
+            //  console.log(index + String(this.sortingOrder));
+            //this.lessonsData[index].spaces--;
+            //console.log(index);
+            const response = await fetch('http://cw2fetchserver-env-1.eba-ncygsx5p.us-east-1.elasticbeanstalk.com/lessons/' + index);
+            const data = await response.json();
+            console.log(data);
+
             this.cart.push(
                 {
-                    id: this.lessons[index].id,
+                    id: data,
                 }
             )
         },
         // remove item from basket
         removeBasket(index) {
-            for (let idx = 0; idx < this.cart.length; idx++) {
-                const element = this.cart[idx];
-                if (index === element.id) {
-                    this.cart.splice(this.cart.indexOf(index), 1);
-                    this.lessons[index].spaces++;
-                }
+            const itemIndex = this.cart.findIndex(item => item.id.id === index);
+            if (itemIndex !== -1) {
+              this.cart.splice(itemIndex, 1);
             }
-        },
-        // confirmorder save into Order array
+          },
+
         confirmOrder() {
             for (let i = 0; i < this.cart.length; i++) {
                 const element = this.cart[i].id;
-                console.log(element);
+                //console.log(element);
                 this.orders.slots.push({
                     element
                 });
@@ -60,20 +73,19 @@ const app = Vue.createApp({
                 alert('Order Placed Successfully...!');
             }
         },
-        toggleShowProduct: function () {
-            if (this.cart.length > 0) { this.showProducts = this.showProducts ? false : true; }
-            else if (this.cart.length <= 0 && this.showProducts == false) {
-                this.showProducts = true;
-            }
+        sortedArray: function () {
+            this.created();
+            let sortArray = this.lessonsData;
+            return sortArray;
         },
     },
     computed: {
         cartTotal() {
             let val = 0;
             this.cart.forEach(element => {
-                val = val + this.lessons[element.id].price;
+              val = val + element.id.price;
             });
-            // console.log(val);
+
             return val;
         },
         cartQty() {
@@ -81,14 +93,13 @@ const app = Vue.createApp({
             this.cart.forEach(element => {
                 val++;
             });
-
             return val;
         },
-        sortedArray(){
-            this.created();
-            let sortArray = this.lessonsData;
-            return sortArray;
-
-          },
+        async loadOne(ind) {
+            console.log(ind);
+            const response = await fetch('http://cw2fetchserver-env-1.eba-ncygsx5p.us-east-1.elasticbeanstalk.com/lessons/' + ind.id);
+            const data = await response.json();
+            return this.cartData = data;
+        },
     }
 }).mount('#app');

@@ -1,25 +1,20 @@
-#app {
-    /* width: 300px;
-    height: 300px;
-    border-radius: 30px;
-    background-color: rgb(211, 250, 217);
-    margin: 10px;
-    padding: 10px; */
+*{
+    margin: 0px;
+    padding: 0px;
 }
 
 #card{
-    width: 300px;
-    border-radius: 30px;
-    background-color: rgb(211, 250, 217);
+    border-radius: 10px;
+    height: 240px;
+    background-color: rgb(240, 245, 241);
     margin: 10px;
     padding: 10px;
-    padding-bottom: 0px;
+    padding-bottom: 10px;
 }
 
 #img {
     width: 25%;
-    background-color: rgba(6, 207, 214, 0.466);
-    border-radius: 20px;
+    border-radius: 5px;
     float:right;
 }
 
@@ -29,7 +24,7 @@
     font-size: larger;
     padding: 5px
 }
-
+/* 
 .basketbt {
     border: 1px;
     border-radius: 10px;
@@ -37,8 +32,8 @@
     color: white;
     background-color: rgb(108, 108, 194);
     margin: 5px;
-}
+} */
 
 .product-image {
-  width: 40%;
+  width: 25%;
 }
