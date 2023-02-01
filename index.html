@@ -249,6 +249,20 @@
             OnKeyUpSearchBar: function() {
                 // Searching results visible true
                 this.SearchItemsView = true;
+                if(this.SearchLesson !== ""){
+                    fetch("https://cw2fetchserver-env-1.eba-ncygsx5p.us-east-1.elasticbeanstalk.com/lessons/search/"+this.SearchLesson+"").then(
+                        function(response) {
+                            console.log("https://cw2fetchserver-env-1.eba-ncygsx5p.us-east-1.elasticbeanstalk.com/lessons/search/"+this.SearchLesson+"/");
+                            response.json().then(
+                                function(json) {
+                                app.lessons = json;
+                                console.log(app.lessons);
+                                }
+                            )
+                        }
+                    );
+                }
+                
             },
             onChange(event) {
                 // console.log(event.target.value);
@@ -364,6 +378,7 @@
             },
             // Performing search filters in order to perform search
             FilterLessons(){
+                
                 if (!app.SearchLesson) return app.lessons
                 let SearchLesson = this.SearchLesson.toLowerCase();
                 return app.lessons.filter(l => {
