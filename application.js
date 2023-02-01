@@ -7,7 +7,7 @@ const app = Vue.createApp({
             showProducts: 0,
             sortingOrder: "asc",
             sortBy: "name",
-            lessons: "//cw2fetchserver-env-1.eba-ncygsx5p.us-east-1.elasticbeanstalk.com/lessons/",
+            lessons: "http://cw2fetchserver-env-1.eba-ncygsx5p.us-east-1.elasticbeanstalk.com/lessons/",
             orders:
             {
                 name: '',
@@ -21,7 +21,7 @@ const app = Vue.createApp({
     methods: {
         onChange(event) {
             this.sortBy = event.target.value
-            this.lessons = "//cw2fetchserver-env-1.eba-ncygsx5p.us-east-1.elasticbeanstalk.com/lessons/" + this.sortingOrder + "/" + event.target.value;
+            this.lessons = "http://cw2fetchserver-env-1.eba-ncygsx5p.us-east-1.elasticbeanstalk.com/lessons/" + this.sortingOrder + "/" + event.target.value;
 
         },
         created() {
@@ -43,7 +43,7 @@ const app = Vue.createApp({
             //  console.log(index + String(this.sortingOrder));
             //this.lessonsData[index].spaces--;
             //console.log(index);
-            const response = await fetch('//cw2fetchserver-env-1.eba-ncygsx5p.us-east-1.elasticbeanstalk.com/lessons/' + index);
+            const response = await fetch('http://cw2fetchserver-env-1.eba-ncygsx5p.us-east-1.elasticbeanstalk.com/lessons/' + index);
             const data = await response.json();
             console.log(data);
 
@@ -97,7 +97,7 @@ const app = Vue.createApp({
         },
         async loadOne(ind) {
             console.log(ind);
-            const response = await fetch('//cw2fetchserver-env-1.eba-ncygsx5p.us-east-1.elasticbeanstalk.com/lessons/' + ind.id);
+            const response = await fetch('http://cw2fetchserver-env-1.eba-ncygsx5p.us-east-1.elasticbeanstalk.com/lessons/' + ind.id);
             const data = await response.json();
             return this.cartData = data;
         },
