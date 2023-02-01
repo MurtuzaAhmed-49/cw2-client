@@ -15,18 +15,19 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
     <link rel="stylesheet" href="style.css" />
-    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <script src="https://unpkg.com/vue@2.7.8/dist/vue.js"></script>
 </head>
 
 <body>
-    <div id="app">
+    <div id="app" v-cloak>
         <div class='container' style="text-align: center;">
             <h3 class="display-2">Learning Spaces in United Kingdom</h3>
         </div>
 
         <nav class="navbar navbar-expand-lg navbar-light bg-light">
             <div class="container">
-                <a class="navbar-brand" href="#" v-on:click="pagesView(0)">Learning Spaces</a>
+                 <a class="navbar-brand" href="#" >Learning Spaces</a> 
+                 <!-- v-on:click="pagesView(0)" -->
                 <button v-on:click="pagesView(0)" class="navbar-toggler" type="button" data-toggle="collapse"
                     data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false"
                     aria-label="Toggle navigation">
@@ -57,33 +58,48 @@
             </div>
         </nav>
 
-        <div v-if="showProducts == 0">
+        <div v-if="showLessons=true">
             <div class="container">
                 <div class='row'>
 
                     <div class="d-flex" style="margin-top: 6px;">
                         <h3 class="display-6">Search:</h3>
-                        <input type="text" class="form-control" placeholder="Search">
+                        <input type="text" class="form-control" placeholder="Search" v-model="SearchLesson" v-on:keyup="OnKeyUpSearchBar">
+                        <div class="container">
+                            <!-- -------------------- Search Result on input Seach -->
+                                        <div class="searchList" v-if="SearchItemsView" id="hide">
+                                            <h4>Search Results:</h4>
+                                            <li v-for="lesson in FilterLessons">
+                                                <img v-bind:src="lesson.subjectImg" alt="" class=" float-left img-responsive " ><br>
+                                                <p class="searchItemDetails">
+                                                    <strong>{{lesson.name}}</strong>
+                                                    Price: {{lesson.price}}</span>
+                                                    Spaces: <span v-html="lesson.places"></span>
+                                                    Locations: <span v-text="lesson.location"></span>
+                                                </p>
+                                            </li>
+                                        </div> 
+                                    </div>
                     </div>
 
                     <main>
                         <div id="sorting" class="form-group">
                             <p class="text-muted" style="margin: 0px;">Sort by:</p>
-                            <select @change="onChange($event)">
-                                <option value="name">Name</option>
+                            <select @change="onChange($event)" name="sortBy">
+                                <option value="name" >Name</option>
                                 <option value="location">Location</option>
                                 <option value="price">Price</option>
                                 <option value="places">Places</option>
                             </select>
 
                             <div class="form-check ">
-                                <input class="form-check-input" name='sortRadiobtn' type="radio" id="asc" value="asc"
-                                    v-on:click="sortings('asc') " checked />
+                                <input class="form-check-input" name='sortRadiobtn'  type="radio" id="asc" value="asc"
+                                    v-on:click="sortings('asc')" v-model="sorted" checked selected />
                                 <label class="form-check-label" for="asc"> Ascending</label>
                             </div>
                             <div class="form-check">
                                 <input class="form-check-input" name='sortRadiobtn' type="radio" id="desc" value="desc"
-                                    v-on:click="sortings('desc')" />
+                                    v-on:click="sortings('desc')" v-model="sorted" />
                                 <label class="form-check-label" for="desc"> Descending</label>
                             </div>
 
@@ -93,7 +109,7 @@
                     <div class="container card border border-light p-3">
                         <div class="row">
 
-                            <div class="col-lg-3 col-sm-6" v-for="(lesson, index) in sortedArray()">
+                            <div class="col-lg-3 col-sm-6" v-for="(lesson, index) in lessons">
 
                                 <div id='card'>
                                     <div class="text-muted">Subject: </div>
@@ -112,7 +128,7 @@
                                     <div class="right">
                                         <span v-if='lesson.places > 0'>
                                             <input class="basketbt btn btn-success" type="button" id="addToBasket"
-                                                value="Add to Basket" v-on:click="toBasket(lesson.id)" />
+                                                value="Add to Basket" v-on:click="toBasket(lesson)" />
                                         </span>
                                         <span v-else-if='lesson.places <= 0'>
                                             <input class="basketbt btn btn-success" type="button" id="addBasket"
@@ -131,7 +147,7 @@
             </div>
         </div>
 
-        <div v-else-if="showProducts == 1">
+        <div v-else-if="showLessons=false">
             <div class="container card border border-light p-3">
                 <div class="row">
 
@@ -186,7 +202,205 @@
     </div>
 
     </div>
-    <script src="application.js"></script>
+    <script>
+    let app = new Vue({
+        el:"#app",
+        data:{
+            // Show Lessons or Checkout Visibility
+            showLessons: true,
+            SearchLesson:null,
+            AppSetting:{
+                Title: "After School Classes App",
+            },
+            lessons: [],
+            // Added Cart
+            cart: {
+                count: 0,
+                // Created Lessons Array for cart items being added into. 
+                lessons: [],
+            },
+            checkoutOrder:{
+                name: "",
+                phone: 0
+            },
+            
+            SearchItemsView: false,
+            sorted: 'asc',
+            sortingOrder: "asc",
+            sortBy: "name",
+        },
+        created: function() {
+            fetch("https://cw2fetchserver-env-1.eba-ncygsx5p.us-east-1.elasticbeanstalk.com/lessons/"+this.sorted+"/name").then(
+                function(response) {
+                    response.json().then(
+                        function(json) {
+                        // note that we used ‘webstore.lessons’
+                        // instead of 'this.lessons’
+                        // alert(json);
+                        app.lessons = json;
+                        console.log(app.lessons);
+                        }
+                    )
+                }
+            );
+        },
+        methods: {
+            // Search Keyup Function
+            OnKeyUpSearchBar: function() {
+                // Searching results visible true
+                this.SearchItemsView = true;
+            },
+            onChange(event) {
+                // console.log(event.target.value);
+                sortBy= event.target.value;
+                this.sortings();
+            },
+            sortings(sorted) {
+                if(typeof(sortBy) === "undefined" || sortBy === null){
+                    sortBy = "name";
+                }
+                if(typeof(sorted) === "undefined" || sorted === null){
+                    sorted = "asc";
+                }
+                fetch("https://cw2fetchserver-env-1.eba-ncygsx5p.us-east-1.elasticbeanstalk.com/lessons/"+sorted+"/"+sortBy+"/").then(
+                    function(response) {
+                        console.log("https://cw2fetchserver-env-1.eba-ncygsx5p.us-east-1.elasticbeanstalk.com/lessons/"+sorted+"/"+sortBy+";");
+                        response.json().then(
+                            function(json) {
+                            app.lessons = json;
+                            console.log(app.lessons);
+                            }
+                        )
+                    }
+                );
+            },
+            // sortings(sorted) {
+            //     console.log(sorted);
+            //     this.sortBy="desc";
+            //     app.created;
+            //     // if(this.sorted === "b"){
+            //     //     function compare(a, b) {
+                    
+            //     //     if (a.spaces < b.spaces) return 1;
+            //     //     if (a.spaces > b.spaces) return -1;
+            //     //     return 0;
+            //     //     }
+                    
+            //     //     console.log(this.sorted);
+            //     //     return this.lessons.sort(compare);
+            //     // }else{
+            //     // // Sorting Lessons by Price
+            //     //     function compare(a, b) {
+            //     //     if (a.price > b.price) return 1;
+            //     //     if (a.price < b.price) return -1;
+            //     //     return 0;
+            //     //     }
+                    
+            //     //     console.log(this.sorted);
+            //     //     return this.lessons.sort(compare);
+            //     // }
+            // },
+            toBasket: function (lesson) {
+                console.log(lesson);
+                lesson.places -= 1;
+                this.cart.lessons.push(lesson.id);   
+            },
+            CartedItemSpacesCount(id) {
+            let count = 0;
+            for (let i = 0; i < this.MyCart.lessons.length; i++) {
+                if (this.MyCart.lessons[i] === id) {
+                count++;
+                }
+            }
+            return count;
+            },
+            // Checkout View Visibile True or False
+            showCheckout(){
+                this.showLessons = this.showLessons ? false : true;
+            },
+            // Check if Lesson Spaces Available
+            canAddToCart(lesson) {
+            return lesson.spaces > this.cartCount({id:lesson.id});
+            },
+            // How many spaces left of lesson count
+            itemsLeft(lesson){
+                return lesson.spaces - this.cartCount(lesson.id) ;
+            },
+            // Cart Items Counting and increment into count
+            cartCount(id) {
+            let count = 0;
+                for(let i = 0; i < this.MyCart.lessons.length; i++) {
+                    if (this.MyCart[i] === id) {
+                    count++;
+                    }
+                }
+                return count;
+            },
+            // Checkout Complete Alert
+            submitCheckoutForm() {
+                alert('Order submitted!');
+            },
+            // Removing Items From Cart 
+            RemoveCartItem(lesson){
+                for (let i = 0; i < this.MyCart.lessons.length; i++) {
+                    //Removing Specific ID
+                    if (this.MyCart.lessons[i] == lesson.id) {
+                    //deducting cart count and reverting spaces changes
+                    this.MyCart.lessons.splice(i, 1);
+                    lesson.spaces += 1;
+                    return
+                    }
+                }
+            },
+            saveLessonToDB(){
+                const newLesson = {
+                        "id": 001,
+                        "subjectImg": "images/book-english.png",
+                        "subjectName": "English (New)",
+                        "location": "London",
+                        "price": 40,
+                        "spaces": 25,
+                        "currency": "£"
+                }
+
+                fetch("https://cw2fetchserver-env-1.eba-ncygsx5p.us-east-1.elasticbeanstalk.com/lessons/",{
+                    method: "POST",
+                    headers:{
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify(newLesson)
+                }).then(
+                function(response) {
+                        response.json().then(
+                            function(json){
+                                alert("Success: "+ json.acknowledged);
+                                console.log("Success: "+ json.acknowledged);
+
+                                this.lessons.push(newLesson);
+                            }
+                        )
+                    }
+                );
+            },
+        },
+        computed: {
+            // Counting Items Count next to Checkout 
+            totalItemsInTheCart: function() {
+                return this.MyCart.lessons.length || "";
+            },
+            // Performing search filters in order to perform search
+            FilterLessons(){
+                if (!app.SearchLesson) return app.lessons
+                let SearchLesson = app.SearchLesson.toLowerCase()
+                return app.lessons.filter(l => {
+                    return l.subjectName.toLowerCase().includes(SearchLesson)
+                })
+            }
+            
+        }
+    })
+
+    </script>
 
 
 </body>
