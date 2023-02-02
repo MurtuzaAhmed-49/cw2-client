@@ -1,11 +1,11 @@
 # CW1 - Coursework Two
 NodeJs Backend and Frontend with Vue.js
-### Description
-# RestAPI Repository Link 
+## Description
+### RestAPI Repository Link 
 https://github.com/MurtuzaAhmed-49/fetch-server
-# Fronend Repository Link
+### Fronend Repository Link
 https://github.com/MurtuzaAhmed-49/cw2-client
-# Published Site
+### Published Site
 https://murtuzaahmed-49.github.io/cw2-client/
 
 
