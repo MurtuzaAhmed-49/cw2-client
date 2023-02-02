@@ -1,7 +1,13 @@
-# CW1 - Coursework One
-Web app with Vue.js
+# CW1 - Coursework Two
+NodeJs Backend and Frontend with Vue.js
 ### Description
-The Front-end web app allows students or their parants to look for after school classes, tuition or activities.
+# RestAPI Repository Link 
+https://github.com/MurtuzaAhmed-49/fetch-server
+# Fronend Repository Link
+https://github.com/MurtuzaAhmed-49/cw2-client
+# Published Site
+https://murtuzaahmed-49.github.io/cw2-client/
+
 
 ## Name
 Murtuza Ahmed
