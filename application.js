@@ -1,41 +1,5 @@
 const app = Vue.createApp({
     el: '#app',
-    data: {
-        // Show Lessons or Checkout Visibility
-        showLessons: true,
-        SearchLesson: null,
-        AppSetting: {
-            Title: "After School Classes App",
-        },
-        lessons: [],
-        // Added Cart
-        MyCart: {
-            count: 0,
-            // Created Lessons Array for cart items being added into. 
-            lessons: [],
-        },
-        checkoutOrder: {
-            name: "",
-            phone: 0
-        },
-        // For Search Input `
-        SearchItemsView: false,
-        sorted: ''
-    },
-    created: function () {
-        console.log("created called");
-        fetch("https://cw2fetchserver-env-1.eba-ncygsx5p.us-east-1.elasticbeanstalk.com/lessons/").then(
-            function (response) {
-                response.json().then(
-                    function (json) {
-                        
-                        this.lessons = json;
-                        console.log(lessons);
-                    }
-                )
-            }
-        )
-    },
     data() {
         return {
             cart: [],
@@ -84,18 +48,18 @@ const app = Vue.createApp({
             console.log(data);
 
             this.cart.push(
-                {
-                    id: data,
-                }
+            {
+                id: data,
+            }
             )
         },
         // remove item from basket
         removeBasket(index) {
             const itemIndex = this.cart.findIndex(item => item.id.id === index);
             if (itemIndex !== -1) {
-                this.cart.splice(itemIndex, 1);
+              this.cart.splice(itemIndex, 1);
             }
-        },
+          },
 
         confirmOrder() {
             for (let i = 0; i < this.cart.length; i++) {
@@ -119,7 +83,7 @@ const app = Vue.createApp({
         cartTotal() {
             let val = 0;
             this.cart.forEach(element => {
-                val = val + element.id.price;
+              val = val + element.id.price;
             });
 
             return val;
