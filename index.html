@@ -133,8 +133,8 @@
                                         </span>
                                         <span v-else-if='lesson.places <= 0'>
                                             <input class="basketbt btn btn-success" type="button" id="addBasket"
-                                                value="Add to Basket" v-on:click="toBasket(lesson)"
-                                                style='color:gray' disabled />
+                                                value="Add to Basket" v-on:click="toBasket(lesson)" style='color:gray'
+                                                disabled />
                                         </span>
                                     </div>
                                 </div>
@@ -164,8 +164,8 @@
                                 v-on:click="removeBasket(a)" />
                         </div>
                     </div>
-                    <!-- <strong>Name: </strong><input v-model='orders.name' />
-                    <strong>Phone: </strong><input v-model='orders.phone' /> -->
+                    <strong>Name: </strong><input v-model='checkoutOrder.name' />
+                    <strong>Phone: </strong><input v-model='checkoutOrder.phone' />
                     <input class="basketbt" type="button" id="proceedBuy" value="Confirm Order"
                         v-on:click="confirmOrder()" />
                     <h2>Total Quantity: {{ cartQty }}</h2>
@@ -209,7 +209,7 @@
                 // Show Lessons or Checkout Visibility
                 showLessons: true,
                 SearchLesson: null,
-                showProducts:0,
+                showProducts: 0,
                 AppSetting: {
                     Title: "After School Classes App",
                 },
@@ -224,9 +224,9 @@
                 // },
                 checkoutOrder: {
                     name: "",
-                    phone: 0
+                    phone: 0,
+                    cart: []
                 },
-
                 SearchItemsView: false,
                 sorted: 'asc',
                 sortingOrder: "asc",
@@ -250,30 +250,65 @@
             methods: {
                 removeBasket(index) {
 
-                for (let idx = 0; idx < this.cart.length; idx++) {
+                    for (let idx = 0; idx < this.cart.length; idx++) {
 
-                    const element = this.cart[idx];
+                        const element = this.cart[idx];
 
-                    if (index.id === element.id) {
+                        if (index.id === element.id) {
 
-                        while (this.cart.indexOf(index) !== -1) {
+                            while (this.cart.indexOf(index) !== -1) {
 
-                            this.cart.splice(this.cart.indexOf(index), 1);
+                                this.cart.splice(this.cart.indexOf(index), 1);
 
-                            const matchingLesson = this.lessons.find(lesson => lesson.id === index.id);
+                                const matchingLesson = this.lessons.find(lesson => lesson.id === index.id);
 
-                            if (matchingLesson) {
+                                if (matchingLesson) {
 
-                                matchingLesson.places++;
+                                    matchingLesson.places++;
+
+                                }
 
                             }
 
                         }
-
                     }
-                }
 
                 },
+
+                async confirmOrder() {
+                    for (let i = 0; i < this.cart.length; i++) {
+                        const element = this.cart[i];
+                        console.log(element);
+                        this.checkoutOrder.cart.push({
+                            element
+                        });
+                        this.cart = [];
+                        this.showProducts = this.showProducts ? false : true;
+
+                        alert('Order Placed Successfully...!');
+                    }
+
+                    try {
+                        const response = await fetch('https://cw2fetchserver-env-1.eba-ncygsx5p.us-east-1.elasticbeanstalk.com/orders/', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify(this.checkoutOrder)
+                        });
+
+                        if (!response.ok) {
+                            throw new Error(response.statusText);
+                        }
+
+                        const data = await response.json();
+                        console.log(data);
+                    } catch (error) {
+                        console.error(error);
+                    }
+
+                },
+
                 pagesView: function (ind) {
                     this.showProducts = ind;
                 },
@@ -407,6 +442,21 @@
                 },
             },
             computed: {
+                cartTotal() {
+                    let val = 0;
+                    this.cart.forEach(element => {
+                        val = val + element.price;
+                    });
+
+                    return val;
+                },
+                cartQty() {
+                    let val = 0;
+                    this.cart.forEach(element => {
+                        val++;
+                    });
+                    return val;
+                },
                 // Counting Items Count next to Checkout 
                 totalItemsInTheCart: function () {
                     return this.MyCart.lessons.length || "";

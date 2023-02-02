@@ -39,6 +39,14 @@ const app = Vue.createApp({
         pagesView: function (ind) {
             this.showProducts = ind;
         },
+        async decrementPlaces() {
+            try {
+                const response = await axios.patch(`/lessons/${this.lessonId}/${this.quantity}`);
+                console.log(response.data);
+            } catch (error) {
+                console.error(error);
+            }
+        },
         async toBasket(index) {
             //  console.log(index + String(this.sortingOrder));
             //this.lessonsData[index].spaces--;
@@ -48,26 +56,39 @@ const app = Vue.createApp({
             console.log(data);
 
             this.cart.push(
-            {
-                id: data,
-            }
+                {
+                    id: data,
+                }
             )
         },
         // remove item from basket
         removeBasket(index) {
             const itemIndex = this.cart.findIndex(item => item.id.id === index);
             if (itemIndex !== -1) {
-              this.cart.splice(itemIndex, 1);
+                this.cart.splice(itemIndex, 1);
             }
-          },
+        },
 
         confirmOrder() {
             for (let i = 0; i < this.cart.length; i++) {
-                const element = this.cart[i].id;
+                const element = this.cart[i];
                 //console.log(element);
                 this.orders.slots.push({
                     element
                 });
+
+                try {
+                    const response = fetch(`https://cw2fetchserver-env-1.eba-ncygsx5p.us-east-1.elasticbeanstalk.com/lessons/${element.id}/1`, {
+                        method: 'PATCH'
+                    });
+                    const data = response.json();
+                    console.log(data);
+                } catch (error) {
+                    console.error(error);
+                }
+
+                this.showProducts= 0;
+
                 this.cart = [];
                 this.showProducts = this.showProducts ? false : true;
                 alert('Order Placed Successfully...!');
@@ -83,7 +104,7 @@ const app = Vue.createApp({
         cartTotal() {
             let val = 0;
             this.cart.forEach(element => {
-              val = val + element.id.price;
+                val = val + element.id.price;
             });
 
             return val;
